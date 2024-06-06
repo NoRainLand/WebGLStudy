@@ -36,6 +36,7 @@ export class MainGame {
     private outlineColor: WebGLUniformLocation;
     private time: WebGLUniformLocation;
     private dt: WebGLUniformLocation;
+    private mouse: WebGLUniformLocation
 
 
     constructor() {
@@ -104,6 +105,7 @@ export class MainGame {
         this.outlineColor = gl.getUniformLocation(this.program, "u_outlineColor");
         this.time = gl.getUniformLocation(this.program, "u_time");
         this.dt = gl.getUniformLocation(this.program, "u_deltaTime");
+        this.mouse = gl.getUniformLocation(this.program, "u_mouse");
 
 
 
@@ -157,7 +159,7 @@ export class MainGame {
         gl.uniform4fv(this.outlineColor, new Float32Array([1.0, 0.5, 0.0, 1.0]));
         gl.uniform1f(this.time, this.runTime);
         gl.uniform1f(this.dt, dt);
-
+        gl.uniform2f(this.mouse, GameEntry.canvas.mouse.x, GameEntry.canvas.mouse.y);
 
 
         gl.drawArrays(gl.TRIANGLES, 0, 6);

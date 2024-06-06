@@ -15,5 +15,6 @@ export class GameEntry {
         document.body.appendChild(this.canvas.canvas);
         this.loader = new Loader();
         this.shader = new Shader();
+        window["GameEntry"] = this;
     }
 }

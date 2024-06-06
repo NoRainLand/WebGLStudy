@@ -24,7 +24,7 @@ export class index {
         this.btnPlay.style.display = 'none';
         this.btnPause.style.display = 'block';
         this.addEvent();
-        this.mainGame = new MainGame();
+        window["mainGame"] = this.mainGame = new MainGame();
 
         this.update();
     }

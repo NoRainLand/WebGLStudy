@@ -11,8 +11,7 @@ uniform float u_time;
 
 void main() {
     vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-    vec4 color = vec4(0.27, 0.27, 0.61, 1.0);
-    vec4 lineColor = vec4(0.16, 1.0, 0.37, 1.0);
+    float r = 0.4;
 
     // float dis = sqrt(pow(abs(uv.x - 0.5), 2.) + pow(abs(uv.y - 0.5), 2.));
     float dis = distance(uv, vec2(0.5));

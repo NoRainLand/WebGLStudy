@@ -6,5 +6,5 @@ export class Config {
     static readonly BASE_FRAGMENT_SHADER_URL = '../shader/fs/base.fs.glsl';
 
     static readonly VERTEX_SHADER_URL = this.BASE_VERTEX_SHADER_URL;
-    static readonly FRAGMENT_SHADER_URL = "../shader/fs/time.fs.glsl";
+    static readonly FRAGMENT_SHADER_URL = "../shader/fs/smoothstep.fs.glsl";
 }

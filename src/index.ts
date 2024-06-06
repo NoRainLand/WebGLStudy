@@ -49,6 +49,7 @@ export class index {
         this.btnReflush.addEventListener('click', () => {
             window.location.reload();
         })
+
     }
 }
 

@@ -74,6 +74,8 @@ export class MainGame {
         if (GameEntry.shader.checkProgram(this.mainGl, this.program)) {
             await this.loadTexture();
             this.initRender();
+            this.startTime = Date.now();
+            this._isPlaying = true;
         }
     }
 
@@ -86,6 +88,7 @@ export class MainGame {
         if (this._isPlaying) {
             this._runTime += dt;
             this.onRender(dt);
+
         }
     }
 
@@ -115,27 +118,22 @@ export class MainGame {
             -1.0, -1.0,
             1.0, -1.0,
             -1.0, 1.0,
-            -1.0, 1.0,
             1.0, -1.0,
+            -1.0, 1.0,
             1.0, 1.0
         ]), gl.STATIC_DRAW);
-        gl.enableVertexAttribArray(this.positionLocation);
-        gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
+
 
         const texCoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            0.0, 1.0,
-            1.0, 1.0,
-            0.0, 0.0,
-            0.0, 0.0,
-            1.0, 1.0,
-            1.0, 0.0
+            -1.0, -1.0,
+            1.0, -1.0,
+            -1.0, 1.0,
+            1.0, -1.0,
+            -1.0, 1.0,
+            1.0, 1.0
         ]), gl.STATIC_DRAW);
-
-
-        this.startTime = Date.now();
-        this._isPlaying = true;
 
     }
 
@@ -146,7 +144,9 @@ export class MainGame {
 
         const gl = this.mainGl;
 
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        //这里如果使用别的可能会出问题，比如使用gl.canvas.width，如果画布尺寸过大，就可能出现问题。
+
+        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
         gl.clearColor(0, 0, 0, 1.0);
         gl.clearDepth(1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -155,6 +155,11 @@ export class MainGame {
 
         gl.enableVertexAttribArray(this.texCoordLocation);
         gl.vertexAttribPointer(this.texCoordLocation, 2, gl.FLOAT, false, 0, 0);
+
+        gl.enableVertexAttribArray(this.positionLocation);
+        gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+
         gl.activeTexture(gl.TEXTURE0);
 
 

@@ -1,21 +1,23 @@
+// Author @patriciogv - 2015
+// http://patriciogonzalezvivo.com
+
 #ifdef GL_ES
 precision mediump float;
 #endif
 
-uniform sampler2D u_texture;
 uniform vec2 u_resolution;
-
-uniform float u_time;
 uniform vec2 u_mouse;
+uniform float u_time;
+
+float circle(in vec2 _st, in float _radius) {
+    vec2 dist = _st - vec2(0.5);
+    return 1. - smoothstep(_radius - (_radius * 0.01), _radius + (_radius * 0.01), dot(dist, dist) * 4.0);
+}
 
 void main() {
-    float u_time = u_time / 10000.;
-    vec2 uv = gl_FragCoord.xy / u_resolution;
-    vec2 mouse = u_mouse / u_resolution;
-    float dis = pow((uv.x - mouse.x), 2.) + pow((uv.y - mouse.y), 2.);
-    float r = 0.2;
-    float a = smoothstep(r * 1.01, r, dis);
-    vec4 texColor = vec4(vec3(dis), a);
+    vec2 st = gl_FragCoord.xy / u_resolution.xy;
 
-    gl_FragColor = texColor;
+    vec3 color = vec3(circle(st, 0.5));
+
+    gl_FragColor = vec4(1., 1., 0., color.r);
 }

@@ -11,6 +11,7 @@ export class index {
     private btnPlay: HTMLButtonElement;
     private btnReflush: HTMLButtonElement;
     private FPS: HTMLPreElement;
+    private btnDownload: HTMLButtonElement;
 
     private mainGame: MainGame;
 
@@ -20,6 +21,8 @@ export class index {
         this.btnPlay = document.getElementById('btnPlay') as HTMLButtonElement;
         this.btnReflush = document.getElementById('btnReflush') as HTMLButtonElement;
         this.FPS = document.getElementById('FPS') as HTMLPreElement;
+        this.btnDownload = document.getElementById("btnDownload") as HTMLButtonElement;
+
 
         this.btnPlay.style.display = 'none';
         this.btnPause.style.display = 'block';
@@ -57,6 +60,9 @@ export class index {
             window.location.reload();
         })
 
+        this.btnDownload.addEventListener("click",()=>{
+            this.mainGame.download();
+        })
     }
 }
 

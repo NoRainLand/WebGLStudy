@@ -4,7 +4,7 @@ uniform sampler2D u_texture;
 uniform sampler2D u_outlineTexture;
 uniform vec2 u_resolution;
 
-uniform vec4 u_outlineColor;
+uniform vec4 u_color;
 uniform float u_time;
 
 void main() {

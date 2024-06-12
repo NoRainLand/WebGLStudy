@@ -10,8 +10,8 @@ export class GameEntry {
     static shader: Shader;
 
     static init() {
-        this.canvas = new Canvas(800, 800, "maincanvas");
-        this.outScreenCanvas = new Canvas(800, 800, "outscreencanvas");
+        this.canvas = new Canvas(800, 800, "maincanvas", true);
+        this.outScreenCanvas = new Canvas(800, 800, "outscreencanvas", false);
         document.body.appendChild(this.canvas.canvas);
         this.loader = new Loader();
         this.shader = new Shader();

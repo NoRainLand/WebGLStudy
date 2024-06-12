@@ -26,10 +26,11 @@ export class MainGame {
 
     private positionLocation: number;
     private textureLocation: WebGLTexture;
+    private copyright: WebGLTexture;
     private textureLight: WebGLUniformLocation;
     private resolution: WebGLUniformLocation;
     private outlineWidth: WebGLUniformLocation;
-    private outlineColor: WebGLUniformLocation;
+    private color: WebGLUniformLocation;
     private time: WebGLUniformLocation;
     private dt: WebGLUniformLocation;
     private mouse: WebGLUniformLocation;
@@ -76,6 +77,8 @@ export class MainGame {
     async loadTexture() {
         await GameEntry.loader.loadTexture(this.mainGl, '../res/image2.png')
         await GameEntry.loader.loadTexture(this.mainGl, '../res/light.png')
+        await GameEntry.loader.loadTexture(this.mainGl, Config.Lena);
+        await GameEntry.loader.loadTexture(this.mainGl, Config.copyright);
     }
 
     onUpdate(dt: number) {
@@ -93,10 +96,11 @@ export class MainGame {
 
         this.positionLocation = gl.getAttribLocation(this.program, "a_position");
         this.textureLocation = gl.getUniformLocation(this.program, "u_texture");
+        this.copyright = gl.getUniformLocation(this.program, "u_copyright");
         this.textureLight = gl.getUniformLocation(this.program, "u_outlineTexture");
         this.resolution = gl.getUniformLocation(this.program, "u_resolution");
         this.outlineWidth = gl.getUniformLocation(this.program, "u_outlineWidth");
-        this.outlineColor = gl.getUniformLocation(this.program, "u_outlineColor");
+        this.color = gl.getUniformLocation(this.program, "u_color");
         this.time = gl.getUniformLocation(this.program, "u_time");
         this.dt = gl.getUniformLocation(this.program, "u_deltaTime");
         this.mouse = gl.getUniformLocation(this.program, "u_mouse");
@@ -128,7 +132,7 @@ export class MainGame {
         //这里如果使用别的可能会出问题，比如使用gl.canvas.width，如果画布尺寸过大，就可能出现问题。
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
-        gl.clearColor(0, 0, 0, 1.0);//设置清空画布的颜色
+        gl.clearColor(0, 0, 0, 0);//设置清空画布的颜色
         gl.clearDepth(1.0);//设置清空画布的深度
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);//清空画布
 
@@ -143,11 +147,14 @@ export class MainGame {
 
 
 
-        gl.uniform1i(this.textureLocation, 0);
+        gl.uniform1i(this.textureLocation, 2);
         gl.uniform1i(this.textureLight, 1);
+
+        gl.uniform1i(this.copyright, 3)
+
         gl.uniform2f(this.resolution, gl.drawingBufferWidth, gl.drawingBufferHeight);
         gl.uniform1i(this.outlineWidth, 3);
-        gl.uniform4fv(this.outlineColor, new Float32Array([1.0, 0.5, 0.0, 1.0]));
+        gl.uniform4fv(this.color, new Float32Array([1.0, 0.5, 0.0, 1.0]));
         gl.uniform1f(this.time, this.runTime);
         gl.uniform1f(this.dt, dt);
         gl.uniform2f(this.mouse, GameEntry.canvas.mouse.x, GameEntry.canvas.mouse.y);
@@ -167,5 +174,34 @@ export class MainGame {
         this._isPlaying = false;
     }
 
+    download() {
+        let gl = GameEntry.canvas.gl;
+        let width = gl.drawingBufferWidth;
+        let height = gl.drawingBufferHeight;
+        let pixels = new Uint8Array(width * height * 4);
+        gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+
+        let ctx = GameEntry.outScreenCanvas.ctx;
+        let imageData = ctx.createImageData(width, height);
+
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                let index = (y * width + x) * 4;
+                let reversedIndex = ((height - y - 1) * width + x) * 4;
+                imageData.data[reversedIndex] = pixels[index];     // R
+                imageData.data[reversedIndex + 1] = pixels[index + 1]; // G
+                imageData.data[reversedIndex + 2] = pixels[index + 2]; // B
+                imageData.data[reversedIndex + 3] = pixels[index + 3]; // A
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        let dataUrl = GameEntry.outScreenCanvas.canvas.toDataURL('image/png');
+
+        let a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = 'canvas.png';
+        a.click();
+    }
 
 }

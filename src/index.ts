@@ -23,6 +23,13 @@ export class index {
 
         this.btnPlay.style.display = 'none';
         this.btnPause.style.display = 'block';
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+
+            }
+        })
+
         this.addEvent();
         window["mainGame"] = this.mainGame = new MainGame();
 

@@ -14,8 +14,8 @@ void main() {
     texCoord = texCoord - 0.5;
 
     // 旋转纹理坐标
-    float cosRot = cos(u_time);
-    float sinRot = sin(u_time);
+    float cosRot = cos(u_time/5000.);
+    float sinRot = sin(u_time/5000.);
     vec2 rotatedTexCoord;
     rotatedTexCoord.x = texCoord.x * cosRot - texCoord.y * sinRot;
     rotatedTexCoord.y = texCoord.x * sinRot + texCoord.y * cosRot;

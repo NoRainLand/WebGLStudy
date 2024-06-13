@@ -2,13 +2,17 @@
 precision mediump float;
 #endif
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+
 uniform sampler2D u_texture;
 uniform sampler2D u_copyright;
+uniform sampler2D u_outlineTexture;
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform float u_deltaTime;
+uniform vec2 u_mouse;
 
-varying vec4 v_color;
+
+varying vec2 v_texCoord;
 
 float circle(in vec2 _st, in float _radius) {
     vec2 dist = _st - vec2(0.5);
@@ -25,7 +29,7 @@ vec4 lsbEncode(vec4 color, float data, int channel) {
         value = floor(color.r * 255.0);
     } else if(channel == 1) {
         value = floor(color.g * 255.0);
-    } else if(channel == 2) {
+    } else {
         value = floor(color.b * 255.0);
     }
 
@@ -41,7 +45,7 @@ vec4 lsbEncode(vec4 color, float data, int channel) {
         color.r = value / 255.0;
     } else if(channel == 1) {
         color.g = value / 255.0;
-    } else if(channel == 2) {
+    } else {
         color.b = value / 255.0;
     }
 
@@ -53,18 +57,19 @@ vec4 lsbDecode(vec4 color, int channel) {
         value = floor(color.r * 255.0);
     } else if(channel == 1) {
         value = floor(color.g * 255.0);
-    } else if(channel == 2) {
+    } else {
         value = floor(color.b * 255.0);
     }
     value = mod(value, 2.0);
     return vec4(vec3(value), 1.0);
 }
 void main() {
-    vec2 st = gl_FragCoord.xy / u_resolution.xy;
+    // vec2 st = gl_FragCoord.xy / u_resolution.xy;
+    // vec4 color = texture2D(u_texture, st * vec2(1.0, -1.0));
 
-    vec4 color = texture2D(u_texture, st * vec2(1.0, -1.0));
+    vec4 color = texture2D(u_texture, v_texCoord);
 
-    vec4 color2 = texture2D(u_copyright, st);
+    vec4 color2 = texture2D(u_copyright, v_texCoord);
 
     color = lsbEncode(color, color2.x, 1);
         // color = vec4(color.xyz, circle(st, 0.5));

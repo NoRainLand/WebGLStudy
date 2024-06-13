@@ -40,7 +40,7 @@ vec4 lsbDecode(vec4 color, int channel) {
         value = floor(color.r * 255.0);
     } else if(channel == 1) {
         value = floor(color.g * 255.0);
-    } else if(channel == 2) {
+    } else {
         value = floor(color.b * 255.0);
     }
     value = mod(value, 2.0);
@@ -48,7 +48,6 @@ vec4 lsbDecode(vec4 color, int channel) {
 }
 void main() {
     vec2 st = gl_FragCoord.xy / u_resolution.xy;
-
     vec4 color = texture2D(u_texture, st * vec2(1.0, -1.0));
 
     vec4 color2 = texture2D(u_copyright, st);

@@ -13,13 +13,15 @@ export class Config {
 
     static readonly copyright = "../res/copyright.png";
 
+    static readonly canvasSize = 640;
 
-    static readonly basePostion = [
-        -1.0, -1.0,
-        1.0, -1.0,
-        -1.0, 1.0,
-        1.0, -1.0,
-        -1.0, 1.0,
+
+    static readonly baseTexcoord = [
+        0.0, 0.0,
+        1.0, 0.0,
+        0.0, 1.0,
+        0.0, 1.0,
+        1.0, 0.0,
         1.0, 1.0
     ];
 }

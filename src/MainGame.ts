@@ -25,6 +25,11 @@ export class MainGame {
 
 
     private positionLocation: number;
+    private texcoordLocation: number;
+
+    private positionBuffer: WebGLBuffer;
+    private texcoordBuffer: WebGLBuffer;
+
     private textureLocation: WebGLTexture;
     private copyright: WebGLTexture;
     private textureLight: WebGLUniformLocation;
@@ -35,6 +40,8 @@ export class MainGame {
     private dt: WebGLUniformLocation;
     private mouse: WebGLUniformLocation;
 
+
+    private imageWH: { width: number, height: number } = { width: 0, height: 0 };
 
     constructor() {
         this.init();
@@ -77,7 +84,11 @@ export class MainGame {
     async loadTexture() {
         await GameEntry.loader.loadTexture(this.mainGl, '../res/image2.png')
         await GameEntry.loader.loadTexture(this.mainGl, '../res/light.png')
-        await GameEntry.loader.loadTexture(this.mainGl, Config.Lena);
+        await GameEntry.loader.loadTexture(this.mainGl, Config.Lena)
+            .then(value => {
+                this.imageWH.width = value[1].width;
+                this.imageWH.height = value[1].height;
+            });
         await GameEntry.loader.loadTexture(this.mainGl, Config.copyright);
     }
 
@@ -95,6 +106,7 @@ export class MainGame {
         gl.useProgram(this.program);
 
         this.positionLocation = gl.getAttribLocation(this.program, "a_position");
+        this.texcoordLocation = gl.getAttribLocation(this.program, "a_texCoord");
         this.textureLocation = gl.getUniformLocation(this.program, "u_texture");
         this.copyright = gl.getUniformLocation(this.program, "u_copyright");
         this.textureLight = gl.getUniformLocation(this.program, "u_outlineTexture");
@@ -105,19 +117,24 @@ export class MainGame {
         this.dt = gl.getUniformLocation(this.program, "u_deltaTime");
         this.mouse = gl.getUniformLocation(this.program, "u_mouse");
 
-        const positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);//绑定缓冲区
+        this.positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);//绑定缓冲区
 
         let basePostion = [
-            -800.0, -800.0,
-            800.0, -800.0,
-            -800.0, 800.0,
-            800.0, -800.0,
-            -800.0, 800.0,
-            800.0, 800.0
+            0, 0,
+            this.imageWH.width, 0,
+            0, this.imageWH.height,
+            0, this.imageWH.height,
+            this.imageWH.width, 0,
+            this.imageWH.width, this.imageWH.height
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(basePostion), gl.STATIC_DRAW);//将数据写入缓冲区，并且告诉WebGL这是一个静态缓冲区
+
+
+        this.texcoordBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.texcoordBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(Config.baseTexcoord), gl.STATIC_DRAW);
     }
 
 
@@ -140,9 +157,14 @@ export class MainGame {
 
         gl.enableVertexAttribArray(this.positionLocation);//启用属性
         //设置属性指针 每次迭代运行提取两个单位数据，每个单位的数据类型是32位浮点型，不归一化，0 = 移动单位数量 * 每个单位占用内存（sizeof(type)），从缓冲起始位置开始读取
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
 
 
+
+        gl.enableVertexAttribArray(this.texcoordLocation);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.texcoordBuffer);
+        gl.vertexAttribPointer(this.texcoordLocation, 2, gl.FLOAT, false, 0, 0);
         // gl.activeTexture(gl.TEXTURE0);
 
 
@@ -194,14 +216,24 @@ export class MainGame {
                 imageData.data[reversedIndex + 3] = pixels[index + 3]; // A
             }
         }
-
         ctx.putImageData(imageData, 0, 0);
-        let dataUrl = GameEntry.outScreenCanvas.canvas.toDataURL('image/png');
 
-        let a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = 'canvas.png';
-        a.click();
+        // let dataUrl = GameEntry.outScreenCanvas.canvas.toDataURL('image/png');
+        // let a = document.createElement('a');
+        // a.href = dataUrl;
+        // a.download = 'canvas.png';
+        // a.click();
+
+        GameEntry.outScreenCanvas.canvas.toBlob((blob) => {
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = 'canvas.png';
+            a.addEventListener("click", () => {
+                URL.revokeObjectURL(url);
+            })
+            a.click();
+        }, 'image/png');
     }
 
 }

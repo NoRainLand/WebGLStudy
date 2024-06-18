@@ -31,6 +31,8 @@ export class MainGame {
     private texcoordBuffer: WebGLBuffer;
 
     private textureLocation: WebGLTexture;
+    private textureSize: WebGLUniformLocation;
+
     private copyright: WebGLTexture;
     private textureLight: WebGLUniformLocation;
     private resolution: WebGLUniformLocation;
@@ -39,7 +41,6 @@ export class MainGame {
     private time: WebGLUniformLocation;
     private dt: WebGLUniformLocation;
     private mouse: WebGLUniformLocation;
-
 
     private imageWH: { width: number, height: number } = { width: 0, height: 0 };
 
@@ -107,7 +108,10 @@ export class MainGame {
 
         this.positionLocation = gl.getAttribLocation(this.program, "a_position");
         this.texcoordLocation = gl.getAttribLocation(this.program, "a_texCoord");
+
         this.textureLocation = gl.getUniformLocation(this.program, "u_texture");
+        this.textureSize = gl.getUniformLocation(this.program, "u_textureSize");
+
         this.copyright = gl.getUniformLocation(this.program, "u_copyright");
         this.textureLight = gl.getUniformLocation(this.program, "u_outlineTexture");
         this.resolution = gl.getUniformLocation(this.program, "u_resolution");
@@ -171,6 +175,8 @@ export class MainGame {
 
         gl.uniform1i(this.textureLocation, 2);
         gl.uniform1i(this.textureLight, 1);
+
+        gl.uniform2fv(this.textureSize, new Float32Array([this.imageWH.width, this.imageWH.height]));
 
         gl.uniform1i(this.copyright, 3)
 
